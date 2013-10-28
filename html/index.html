@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html  data-ng-app="reader">
+    <head>
+        <title>NodeReader</title>
+        <!-- JQuery 1.8.0 -->
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.js"></script>
+        <!-- Angular.js 1.1.5 -->
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.js"></script>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css">
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-theme.min.css">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+        <!-- Reader controller -->
+        <script src="reader.js"></script>
+
+        <style>
+            html {
+                height: 100%;
+            }
+
+            body {
+                position: relative;
+                min-height: 100%;
+                padding-bottom: 150px;
+            }
+
+            .footer {
+                position: absolute;
+                bottom: 0px;
+                width: 100%;
+                /*border-top: 1px solid #ccc;
+                background-color: #eee;
+                color: #555;
+                padding-top: 15px;*/
+            }
+            
+            .sidebar.affix-top {
+            }
+            
+            .sidebar.affix {
+                position: fixed;
+                top: 80px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="nav navbar navbar-default">
+            <div class="container">
+                <div class="navbar-header">                
+                    <div class="navbar-brand">Node-Reader</div>
+                </div>
+                <div class="pull-right">
+                    <ul class="nav navbar-nav">
+                        <li><a href="#feeds">Feeds</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="main-div">
+                <div data-ng-view data-ng-animate="{enter: 'animate-enter', leave: 'animate-exit'}">
+                    <p>Broken view controller</p>
+                </div>
+            </div>
+        </div> <!-- /container -->
+
+        <div class="footer">
+            <div class="container">
+                <div class="well">
+                    <p><b>Node-Reader</b></p>
+                    <p>Client side built using <a href="http://angularjs.org/">AngularJS</a>, <a href="http://getbootstrap.com/">Bootstrap</a>.</p>
+                    <p>Backend build using <a href="http://nodejs.org/">Node.js</a>.</p>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,21 @@
+{
+    "name": "FeedReed",
+    "description": "(pending)",
+    "version": "0.0.1",
+    "main": "./FeedReed.js",
+    "author": {
+        "name": "Chris 'DrLabman' Hallson",
+        "email": "drlabman@gluonporridge.net"
+    },
+    "keywords": [],
+    "licenses": {
+        "type": "apache20"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/drlabman/FeedReed.git"
+    },
+    "bugs": {
+        "web": "http://github.com/drlabman/FeedReed/issues"
+    }
+}
