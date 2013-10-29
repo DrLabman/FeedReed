@@ -1,6 +1,15 @@
 {
     "_comment": "This is an example email configuration file. Copy this file and name it emailconfig.json and fill in the approperate details",
-    "_documentation": "See the nodemailer documentation at https://github.com/andris9/Nodemailer for valid configurations.",
-    "service": "Gmail",
-    "auth": { "user": "gmail.user@gmail.com", "pass": "gmail.password" }
+    "config": {
+        "_documentation": "See the nodemailer documentation at https://github.com/andris9/Nodemailer for valid configurations.",
+        "service": "Gmail",
+        "auth": { "user": "gmail.user@gmail.com", "pass": "gmail.password" }
+    },
+    "default": {
+        "_documentation": "Email address and details to send contact emails to.",
+        "from": "Email title <fake@email>",
+        "to": "Admin <admin@email>",
+        "subject": "NodeReader: Contact Form",
+        "text": ""
+    }
 }

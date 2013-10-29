@@ -1,25 +1,21 @@
 var nodemailer = require("nodemailer");
 var fs = require('fs');
 
+// Config file should contain .config and .defaults
+var configFile = JSON.parse(fs.readFileSync("emailconfig.json","utf8"));
+
 // default mail settings, replace the text and optionally html with the message
 // This app doesn't need to change the to/from details
 function defaults() {
     "use strict";
 
-    return {
-        from: "GluonNodeReader <nodereader@gluonporridge.net>", // sender address
-        to: "Chris <cm.hallson@gmail.com>", // list of receivers
-        subject: "NodeReader: Contact Form", // Subject line
-        //html: "",
-        text: ""
-    };
+    // Clone defaults and return
+    return JSON.parse(JSON.stringify(configFile.defaults));
 }
-
-var config = JSON.parse(fs.readFileSync("emailconfig.json","utf8"));
 
 // TODO: work out the best time to create this and some kind of lifecycle
 // create reusable transport method (opens pool of SMTP connections)
-var smtpTransport = nodemailer.createTransport("SMTP", config);
+var smtpTransport = nodemailer.createTransport("SMTP", configFile.config);
 
 function send(mailOptions, callback) {
     "use strict";
