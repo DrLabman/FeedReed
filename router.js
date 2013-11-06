@@ -1,3 +1,8 @@
+"use strict";
+
+var webservice = require('./webservicebase');
+
+// TODO: Add support for regular expressions
 function routeSetup(handlers) {
     this.handlers = handlers;
 
@@ -9,9 +14,7 @@ function routeSetup(handlers) {
                 handlers.default(request, response);
             } else {
                 console.log("No request handler found for " + pathname);
-                response.writeHead(404, {"Content-Type": "text/plain"});
-                response.write("404 Not found");
-                response.end();
+                webservice.sendError(response, 404, "404 Not found");
             }
         }
     }

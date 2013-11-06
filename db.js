@@ -22,7 +22,8 @@ var database = orm.connect("sqlite://database.sql", function (err, db) {
         feed_id: Number,
         title: String,
         link: String,
-        description: String
+        description: String,
+        pub_date: Date
     });
     item.hasOne("feed", feed);
 

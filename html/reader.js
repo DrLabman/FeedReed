@@ -22,7 +22,7 @@ recipe.run(function($rootScope, $templateCache) {
 });
 
 recipe.factory('$webservices', function ($http) {
-    var callServer = function (path, data, successCallback) {
+    var callServer = function (path, data, successCallback, errorCallback) {
         $http({method: 'POST',
             url: path,
             data: data,
@@ -30,7 +30,11 @@ recipe.factory('$webservices', function ($http) {
         }).success(function (data, status, headers, config) {
             successCallback(data);
         }).error(function (data, status, headers, config) {
-            console.log("Error: " + data);
+            if (typeof(errorCallback) === "function") {
+                errorCallback(data);
+            } else {
+                console.log("Error: " + data);
+            }
         });
     };
 
@@ -41,14 +45,16 @@ recipe.factory('$webservices', function ($http) {
             });
         },
         listFeeds: function (callback) {
-            callServer("/feeds", {cmd: "listFeeds"}, function (data) {
-                callback(data);
-            });
+            callServer("/feeds", {cmd: "list"}, callback);
         },
         listFeedItems: function (id, callback) {
-            callServer("/feeds", {cmd: "getFeedItems", id: id}, function (data) {
-                callback(data);
-            });
+            callServer("/feeds", {cmd: "getItems", id: id}, callback);
+        },
+        testFeed: function (url, callback) {
+            callServer("/feeds", {cmd: "test", url: url}, callback, callback);
+        },
+        addFeed: function(url, callback) {
+            callServer("/feeds", {cmd: "add", url: url}, callback, callback);
         }
     };
 });
@@ -76,13 +82,16 @@ recipe.controller("FeedCtrl", function ($scope, $webservices, $routeParams) {
     $scope.activeFeed = $routeParams.feedId;
 
     $webservices.listFeeds(function (data) {
-        console.dir(data);
+        //console.dir(data);
         $scope.feeds = data;
     });
 
     if ($scope.activeFeed != null) {
         $webservices.listFeedItems($scope.activeFeed, function(data)  {
-            console.dir(data);
+            //console.dir(data);
+            data.forEach(function (item){
+                item.pub_date = new Date(item.pub_date).toUTCString();
+            });
             $scope.feedItems = data;
         });
     }
@@ -91,5 +100,44 @@ recipe.controller("FeedCtrl", function ($scope, $webservices, $routeParams) {
 });
 
 recipe.controller("FeedAddCtrl", function ($scope, $webservices) {
+    $scope.feed = {};
+    $scope.feed.ok = false;
+    $scope.feed.data = "No feed requested yet";
     
-})
+    $scope.feed.test = function () {
+        var url = $scope.feed.url;
+        
+        if (url == null) {
+            alert("Enter a URL first");
+        } else {
+            function output(data) {
+                var output = "";
+                for (var prop in data) {
+                    output += "<b>" + prop + ":</b> " + data[prop] + "<br/>";
+                }
+                $scope.feed.data = output;
+            }
+            
+            $webservices.testFeed(url, function (data) {
+                $scope.feed.ok = true;
+                output(data);
+            }, function (data) {
+                $scope.feed.ok = false;
+                output(data);
+            });
+        }
+    };
+    
+    $scope.feed.add = function () {
+        var url = $scope.feed.url;
+        
+        if ($scope.feed.ok === false) {
+            alert("Test feed first before adding.");
+        } else {
+            // TODO: call webservice
+            $webservices.addFeed(url, function (data) {
+                alert(data);
+            });
+        }
+    };
+});

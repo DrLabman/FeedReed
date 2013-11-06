@@ -1,8 +1,10 @@
+"use strict";
+
+var webservice = require("./webservicebase").webservice;
 var emailService = require('./emailservice');
 
 // TODO: make base webservice which is reuseable
 function contactService(request, response) {
-    "use strict";
     console.log("Request handler 'contactService' was called.");
 
     var queryData = "";
@@ -12,7 +14,7 @@ function contactService(request, response) {
             queryData += data;
             if (queryData.length > 1e6) {
                 queryData = "";
-                response.writeHead(413, {'Content-Type': 'text/plain'}).end();
+                webservice.sendError(response, 413);
                 request.connection.destroy();
             }
         });
@@ -20,7 +22,7 @@ function contactService(request, response) {
         request.on('end', function () {
             var data = JSON.parse(queryData),
                 email = emailService.defaults();
-            
+
             email.html = "<b>Name: </b> " + data.name + "<br/>\n" +
                 "<b>Email: </b> " + data.email + "<br/>\n" +
                 "<b>Message: </b> " + data.message;

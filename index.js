@@ -2,7 +2,7 @@ var reader = require("./reader");
 var server = require("./server");
 var router = require("./router");
 
-var webserver = require("./webservice");
+var webserver = require("./webservicebase");
 var contactWebservice = require("./contactwebservice");
 var feedWebservice = require("./feedwebservice");
 var fsHandler = require("./fileservice");

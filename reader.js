@@ -1,3 +1,5 @@
+"use strict";
+
 var http = require('http');
 var url = require("url");
 var FeedParser = require('feedparser');
@@ -9,8 +11,6 @@ var db = require('./db.js');
  * Converts a URL into parts for use with the http.request function.
  */
 function fullUrlToOptions(URL) {
-    "use strict";
-
     var parsed = url.parse(URL);
     return {
         hostname: parsed.hostname,
@@ -21,8 +21,6 @@ function fullUrlToOptions(URL) {
 }
 
 function getRSS(url, callback) {
-    "use strict";
-
     console.log("Getting data for RSS Feed: " + url);
     var options, req;
 
@@ -35,7 +33,8 @@ function getRSS(url, callback) {
         fp = new FeedParser({addmeta: false});
         resp.pipe(fp).on('error', function (error) {
             // always handle errors
-            console.log("Error: " + error);
+            console.log(error);
+            callback("" + error);
         }).on('meta', function (meta) {
             // hold the metadata
             metadata = meta;
@@ -53,7 +52,7 @@ function getRSS(url, callback) {
         }).on('end', function () {
             // done, callback with the metadata and articles
             console.log("Done reading stream");
-            callback(metadata, articles);
+            callback(null, metadata, articles);
         });
     }).on('error', function (e) {
         console.log('problem with request: ' + e.message);
@@ -62,8 +61,6 @@ function getRSS(url, callback) {
 }
 
 function updateDatabase(feed, metadata, articles, callback) {
-    "use strict";
-
     // Get a list of links (used as unique data for the feed items)
     var links = [];
     articles.forEach(function (item) {
@@ -86,7 +83,8 @@ function updateDatabase(feed, metadata, articles, callback) {
                         feed: feed,
                         title: item.title,
                         link: item.link,
-                        description: item.description
+                        description: item.description,
+                        pub_date: new Date(item.pubDate)
                     });
                 }
             });
@@ -105,8 +103,6 @@ function updateDatabase(feed, metadata, articles, callback) {
 }
 
 function updateRSS(url, articles, callback) {
-    "use strict";
-
     if (callback === undefined || callback === null) {
         callback = articles;
         articles = null;
@@ -125,7 +121,7 @@ function updateRSS(url, articles, callback) {
                 } else {
                     // Feed not in the database: Get rss data to insert feed items
                     // TODO: wrap error in get rss here
-                    getRSS(url, function (metadata, articles) {
+                    getRSS(url, function (error, metadata, articles) {
                         updateDatabase(feed[0], metadata, articles, callback);
                     });
                 }
@@ -135,8 +131,6 @@ function updateRSS(url, articles, callback) {
 }
 
 function updateAllRSS(callback) {
-    "use strict";
-
     db.database.models.feed.find(function (err, data) {
         if (err !== null) {
             console.log(err);
@@ -155,8 +149,6 @@ function updateAllRSS(callback) {
 }
 
 function addRSS(url, callback) {
-    "use strict";
-
     db.database.models.feed.find({url: url}, function (err, data) {
         if (err !== null) {
             callback(err);
@@ -164,7 +156,7 @@ function addRSS(url, callback) {
             if (data.length === 0) {
                 // TODO: wrap error in get rss here
                 // Get rss data
-                getRSS(url, function (metadata, articles) {
+                getRSS(url, function (error, metadata, articles) {
                     // Create record
                     db.database.models.feed.create({
                         url: url,
@@ -191,6 +183,7 @@ function addRSS(url, callback) {
 }
 
 exports.add = addRSS;
+exports.get = getRSS;
 exports.update = updateAllRSS;
 
 /**
